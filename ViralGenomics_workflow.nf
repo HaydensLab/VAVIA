@@ -27,13 +27,13 @@ process PostProcessing{
 process VariantCalling{
 
 }
-///she did 10 cuts
+
 process VariantFiltering{
 
 }
 
 process VariantAnnotation{
-    
+
 }
 
 workflow{
