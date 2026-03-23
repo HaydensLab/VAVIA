@@ -1,1 +1,4 @@
 Raw_data/
+work/
+.nextflow/
+results/
