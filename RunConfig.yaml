@@ -1,2 +1,4 @@
 read_location: "Raw_data" ###the name of the store directory DO NOT INCLUDE / just raw name in case of absolute or small relative do not include final /
 study_code: "ERR" ##provide the starting letter identifiers of each file name - modify to fit naming convention (i.e it should read Raw_data ERR (to represent Raw_data/ERRxxxxxx_1.fastq.gz))
+batch_id: "n1"
+Keep_intermediates: "false"

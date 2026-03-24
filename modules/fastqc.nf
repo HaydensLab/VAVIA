@@ -8,9 +8,8 @@ process fastqc{
     tuple val(sampleid), path(reads)
 
     output:
-    // path "*.html", emit: "html"
-    // path "*.zip", emit: "zip"
-    path "${sampleid}_QC/"
+    path("${sampleid}_QC/"), emit: "qc_path"
+    val(sampleid), emit: "sampleid"
 
     script:
     """
