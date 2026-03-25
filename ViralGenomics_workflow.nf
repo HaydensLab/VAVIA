@@ -86,6 +86,7 @@ workflow{
 }
 
 output{
+    //=================================raw QC outputs=================================
     QCresults{
         path "./${params.batch}/raw_QC"
         mode "copy"
@@ -94,6 +95,8 @@ output{
         path "./${params.batch}/raw_multiqc"
         mode "copy"
     }
+
+    //=================================fastp outputs=================================
     fastp_results{
         path "./${params.batch}/fastp/"
         mode "copy"
@@ -106,6 +109,7 @@ output{
         path "./${params.batch}/fastp/"
         mode "copy"
     }
+    //=================================fastp trimmed QC outputs=================================
     Trimmed_QCresults{
         path "./${params.batch}/Trimmed_QC"
         mode "copy"
