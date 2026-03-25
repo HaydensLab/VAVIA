@@ -11,10 +11,13 @@ params{
 }
 
 //aliases are used here to allow for reusing of processes under different names to avoid overwriting
-include { fastqc } from "./modules/fastqc"
-include { fastqc as fastqc_trimmed} from "./modules/fastqc"
-include { multiqc } from "./modules/multiqc"
-include { multiqc as multiqc_trimmed} from "./modules/multiqc"
+include { fastqc } from "./modules/fastqc.nf"
+include { fastqc as fastqc_trimmed} from "./modules/fastqc.nf"
+
+include { multiqc } from "./modules/multiqc.nf"
+include { multiqc as multiqc_trimmed} from "./modules/multiqc.nf"
+
+include { fastp } from "./modules/fastp.nf"
 
 
 // process CleanUp{
@@ -28,29 +31,6 @@ include { multiqc as multiqc_trimmed} from "./modules/multiqc"
     
 // }
 
-
-
-process fastp{
-    container "biocontainers/fastp:v0.20.1_cv1"
-
-    tag("${sampleid}")
-
-    input:
-    tuple val(sampleid), path(read1), path(read2)
-
-    output:
-    tuple val(sampleid), path("*_1.trimmed.fastq.gz"), path("*_2.trimmed.fastq.gz"), emit: "read_tuple"
-
-    script:
-    """
-    fastp \
-      -i ${read1} -I ${read2} \
-      -o ${sampleid}_1.trimmed.fastq.gz \
-      -O ${sampleid}_2.trimmed.fastq.gz \
-      -h ${sampleid}.html \
-      -j ${sampleid}.json \
-    """
-}
 
 // process Aligner{
 
@@ -79,13 +59,17 @@ process fastp{
 workflow{
 
     main:
+    //Input channel inputting a flat array of the ID, Read1 path, Read2 path.
     Raw_Reads_channel = channel.fromFilePairs("${params.read_location}/*_{1,2}.fastq.gz", flat: true).view()//this specifies group pairs matching the pattern starts with ERR ends with _1 OR _2 it outputs an array with value 0 being ID before _1/2 and the read pair
 
+    //initial raw read QC
     fastqc(Raw_Reads_channel)
     multiqc(params.batch_id, fastqc.out.qc_path.collect())
+    
+    //running fastp to remove adapters where possible
     fastp(Raw_Reads_channel)
 
-    fastp.out.view()
+    //second round of post-trimming QC
     fastqc_trimmed(fastp.out.read_tuple)
     multiqc_trimmed(params.batch_id, fastqc_trimmed.out.qc_path.collect())
 
@@ -93,7 +77,9 @@ workflow{
     publish:
     QCresults = fastqc.out.qc_path
     multiqc_results = multiqc.out
-    fastp_results = fastp.out
+    fastp_results = fastp.out.read_tuple //trimmed reads to go for later processing (with sample id)
+    fastp_html = fastp.out.html //report html
+    fastp_json = fastp.out.json //report json
     Trimmed_QCresults = fastqc_trimmed.out.qc_path.view()
     Trimmed_multiqc_results = multiqc_trimmed.out.view()
 
@@ -109,8 +95,16 @@ output{
         mode "copy"
     }
     fastp_results{
-        path "./${params.batch}/fastp"
-        mode ""
+        path "./${params.batch}/fastp/"
+        mode "copy"
+    }
+    fastp_html{
+        path "./${params.batch}/fastp/"
+        mode "copy"
+    }
+    fastp_json{
+        path "./${params.batch}/fastp/"
+        mode "copy"
     }
     Trimmed_QCresults{
         path "./${params.batch}/Trimmed_QC"
