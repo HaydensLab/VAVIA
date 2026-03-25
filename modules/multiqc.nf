@@ -12,6 +12,6 @@ process multiqc{
 
     script:
     """
-    multiqc ${qc_results_path}
+    multiqc ${qc_results_path} --fullnames
     """
 }

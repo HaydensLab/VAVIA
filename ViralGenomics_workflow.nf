@@ -96,17 +96,16 @@ workflow{
     fastp_results = fastp.out
     Trimmed_QCresults = fastqc_trimmed.out.qc_path.view()
     Trimmed_multiqc_results = multiqc_trimmed.out.view()
-    //currently broken, cannot access first element from an empty list, fastqc_trimmed and multi_qc trimmed are jumping ahead
 
 }
 
 output{
     QCresults{
-        path "./${params.batch}"
+        path "./${params.batch}/raw_QC"
         mode "copy"
     }
     multiqc_results{
-        path "./${params.batch}/multiqc"
+        path "./${params.batch}/raw_multiqc"
         mode "copy"
     }
     fastp_results{
@@ -114,11 +113,11 @@ output{
         mode ""
     }
     Trimmed_QCresults{
-        path "./${params.batch}/Trimmed"
+        path "./${params.batch}/Trimmed_QC"
         mode "copy"
     }
     Trimmed_multiqc_results{
-        path "./${params.batch}/multiqc"
+        path "./${params.batch}/Trimmed_multiqc"
         mode "copy"
     }
 }

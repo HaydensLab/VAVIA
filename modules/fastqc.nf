@@ -14,7 +14,7 @@ process fastqc{
     script:
     """
     mkdir -p "${sampleid}_QC"
-    fastqc ${read2} ${read2} -o ${sampleid}_QC/
+    fastqc ${read1} ${read2} -o ${sampleid}_QC/
     
     """
 }
