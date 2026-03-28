@@ -1,6 +1,6 @@
 read_location: "Raw_data" ###the name of the store directory DO NOT INCLUDE / just raw name in case of absolute or small relative do not include final /
 study_code: "ERR" ##provide the starting letter identifiers of each file name - modify to fit naming convention (i.e it should read Raw_data ERR (to represent Raw_data/ERRxxxxxx_1.fastq.gz))
-batch_id: "n1"
+batch: "n1"
 Keep_intermediates: "false"
 Ref_genome_path: References/HPV16ref.fasta  ##provide complete path (relative or absolute) to the Reference genome
 Ref_Accession: "NC_001526.4" ##remove version such as .4 in the case of NC_001526.4 > use NC_001526

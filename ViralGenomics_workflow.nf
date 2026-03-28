@@ -61,10 +61,8 @@ process Aligner{
         
     input:
     tuple val(sampleid), path(read1), path(read2)
-    path(Index)
+    path(Indexes)
     path(Reference)
-
-
 
     output:
     path("*.bam"), emit: "bam", optional: true
@@ -75,11 +73,14 @@ process Aligner{
     script:
     read_group = "@RG\tID:Seq${sampleid}\tSM:Seq${sampleid}\tPL:ILLUMINA\tPI:150"
     """
-    bwa mem -R ${read_group} ${Reference} ${read1} ${read2} | samtools view -b -S | samtools sort -n -o "${sampleid}.bam"
+    bwa mem -R ${read_group} ${Indexes} ${Reference} ${read1} ${read2} | samtools view -b -S | samtools sort -n -o "${sampleid}.bam"
     """
 
     stub:
     """
+    touch ${sampleid}.bam
+    touch ${sampleid}.csi
+    touch ${sampleid}.crai
     """
 }
 
@@ -107,7 +108,7 @@ workflow{
 
     main:
     //Input channel inputting a flat array of the ID, Read1 path, Read2 path.
-    Raw_Reads_channel = channel.fromFilePairs("${params.read_location}/*_{1,2}.fastq.gz", flat: true).view()//this specifies group pairs matching the pattern starts with ERR ends with _1 OR _2 it outputs an array with value 0 being ID before _1/2 and the read pair
+    Raw_Reads_channel = channel.fromFilePairs("${params.read_location}/*_{1,2}.fastq.gz", flat: true)//this specifies group pairs matching the pattern starts with ERR ends with _1 OR _2 it outputs an array with value 0 being ID before _1/2 and the read pair
 
     //initial raw read QC
     fastqc(Raw_Reads_channel)
@@ -121,9 +122,11 @@ workflow{
     multiqc_trimmed(params.batch, fastqc_trimmed.out.qc_path.collect())
 
     //NOT COMPLETE #############################################################################!!!!!!!!!!!!!!!!!!
-    Reference_channel = channel.fromPath(params.Ref_genome_path).view()
+    Reference_channel = channel.fromPath(params.Ref_genome_path)
     BWA_Indexing(Reference_channel)
-    Aligner(fastp.out.read_tuple)
+    Aligner_input_ch = fastp.out.read_tuple
+    Aligner_indexes_ch = BWA_Indexing.out.Index_files.collect().map{ Index_files -> tuple(Index_files)}.view()
+    Aligner(Aligner_input_ch, Aligner_indexes_ch, Reference_channel)
     
 
     publish:
@@ -132,8 +135,8 @@ workflow{
     Fastp_results = fastp.out.read_tuple //trimmed reads to go for later processing (with sample id)
     Fastp_html = fastp.out.html //report html
     Fastp_json = fastp.out.json //report json
-    Trimmed_QCresults = fastqc_trimmed.out.qc_path.view()
-    Trimmed_multiqc_results = multiqc_trimmed.out.view()
+    Trimmed_QCresults = fastqc_trimmed.out.qc_path
+    Trimmed_multiqc_results = multiqc_trimmed.out
     //Index and align
     Indexes = BWA_Indexing.out.Index_files
     BAM_out = Aligner.out.bam
