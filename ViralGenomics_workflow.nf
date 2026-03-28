@@ -27,14 +27,24 @@ include { fastp } from "./modules/fastp.nf"
 // }
 
 
-// process RunConfigImport{
-    
-// }
+
+process Aligner{
+        
+    tag("${sampleid}")
+
+    container "biocontainers/bwa:v0.7.17_cv1"
+        
+    input:
+    tuple val(sampleid), path(read1), path(read2)
 
 
-// process Aligner{
 
-// }
+    output:
+    val placeholder
+    script:
+    """
+    """
+}
 
 // process PostProcessing{
 
@@ -73,13 +83,15 @@ workflow{
     fastqc_trimmed(fastp.out.read_tuple)
     multiqc_trimmed(params.batch_id, fastqc_trimmed.out.qc_path.collect())
 
+    //NOT COMPLETE #############################################################################!!!!!!!!!!!!!!!!!!
+    Aligner(fastp.out.read_tuple)
 
     publish:
     QCresults = fastqc.out.qc_path
-    multiqc_results = multiqc.out
-    fastp_results = fastp.out.read_tuple //trimmed reads to go for later processing (with sample id)
-    fastp_html = fastp.out.html //report html
-    fastp_json = fastp.out.json //report json
+    Multiqc_results = multiqc.out
+    Fastp_results = fastp.out.read_tuple //trimmed reads to go for later processing (with sample id)
+    Fastp_html = fastp.out.html //report html
+    Fastp_json = fastp.out.json //report json
     Trimmed_QCresults = fastqc_trimmed.out.qc_path.view()
     Trimmed_multiqc_results = multiqc_trimmed.out.view()
 
@@ -91,21 +103,21 @@ output{
         path "./${params.batch}/raw_QC"
         mode "copy"
     }
-    multiqc_results{
+    Multiqc_results{
         path "./${params.batch}/raw_multiqc"
         mode "copy"
     }
 
     //=================================fastp outputs=================================
-    fastp_results{
+    Fastp_results{
         path "./${params.batch}/fastp/"
         mode "copy"
     }
-    fastp_html{
+    Fastp_html{
         path "./${params.batch}/fastp/"
         mode "copy"
     }
-    fastp_json{
+    Fastp_json{
         path "./${params.batch}/fastp/"
         mode "copy"
     }
