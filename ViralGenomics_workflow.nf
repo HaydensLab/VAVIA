@@ -11,15 +11,16 @@ params{
     insert_size: String
 }
 
-//aliases are used here to allow for reusing of processes under different names to avoid overwriting
+//==========================================================================Processing modules==========================================================================
 include { fastqc } from "./modules/fastqc.nf"
-include { fastqc as fastqc_trimmed} from "./modules/fastqc.nf"
+include { fastqc as fastqc_trimmed} from "./modules/fastqc.nf" //Alias for reuse
 
 include { multiqc } from "./modules/multiqc.nf"
-include { multiqc as multiqc_trimmed} from "./modules/multiqc.nf"
+include { multiqc as multiqc_trimmed} from "./modules/multiqc.nf" //Alias for reuse
 
 include { fastp } from "./modules/fastp.nf"
 
+include { BWA_Indexing} from "./modules/BWAindexer.nf"
 include { Aligner } from "./modules/BWAaligner.nf"
 
 
@@ -29,31 +30,7 @@ include { Aligner } from "./modules/BWAaligner.nf"
 //     script:
 // }
 
-process BWA_Indexing{
-    tag("indexing reference genome")
 
-    container "biocontainers/bwa:v0.7.17_cv1" //pure bwa docker image
-
-    input:
-    path(reference_genome) //importing the reference genome
-
-    output:
-    path("*.{amb,ann,bwt,pac,sa}"), emit: "Index_files" //output all files
-
-    script:
-    """
-    bwa index ${reference_genome}
-    """
-
-    stub:
-    """
-    touch "${params.Ref_Accession}.amb"
-    touch "${params.Ref_Accession}.ann"
-    touch "${params.Ref_Accession}.bwt"
-    touch "${params.Ref_Accession}.pac"
-    touch "${params.Ref_Accession}.sa"
-    """
-}
 
 
 
