@@ -3,4 +3,4 @@ Ref_genome_path: References/NC_001526.4.fasta ##provide complete path (relative 
 Ref_Accession: "NC_001526.4" ##remove version such as .4 in the case of NC_001526.4 > use NC_001526
 insert_size: "150"
 platform: "ILLUMINA" ##put in all caps
-batch: "n1" #OPTIONAL
+batch: "Test" #OPTIONAL

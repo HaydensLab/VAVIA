@@ -11,7 +11,7 @@ include { IndexForIGV } from "../modules/IndexForIGV.nf"
 workflow BWAALIGNMENT{
     take:
     Fastp_trimmed
-
+    
     main:
     Reference_channel = channel.fromPath(params.Ref_genome_path) //channel takes input from global parameter specified in the RunConfig.yaml file
     BWA_Indexing(Reference_channel)
