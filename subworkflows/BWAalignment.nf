@@ -3,60 +3,23 @@ nextflow.enable.dsl=2
 
 include { BWA_Indexing } from "../modules/BWAindexer.nf"
 include { Aligner } from "../modules/BWAaligner.nf"  
+include { Fixmate } from "../modules/Fixmate.nf"
+include { Markdup } from "../modules/Markdup.nf"
+include { IndexForIGV } from "../modules/IndexForIGV.nf"
 
-process Fixmate{
-    container "community.wave.seqera.io/library/samtools:1.23.1--d76a06ff3aefee52"
-    input:
-    tuple val(sampleid), path(bam_path)
-
-    output:
-    tuple val(sampleid), path("${sampleid}_sorted_fixmate.bam"), emit: "Sorted_Fixmate_BAM"
-
-    script:
-    """
-    samtools fixmate -m ${bam_path} ${sampleid}_fixmate.bam
-    samtools sort "${sampleid}_fixmate.bam" -o "${sampleid}_sorted_fixmate.bam"
-    """
-}
-
-process Markdup{
-    container "community.wave.seqera.io/library/samtools:1.23.1--d76a06ff3aefee52"
-    input:
-    tuple val(sampleid), path(fixmate_bam_path)
-
-    output:
-    tuple val(sampleid), path("${sampleid}_Markdup.bam"), emit: "Markdup_BAM"
-
-    script:
-    """
-    samtools markdup -r ${fixmate_bam_path} "${sampleid}_Markdup.bam"
-    """
-}
-
-process IndexForIGV{
-    container "community.wave.seqera.io/library/samtools:1.23.1--d76a06ff3aefee52"
-    input:
-    tuple val(sampleid), path(Markdup_bam_path)
-
-    output:
-    path("${sampleid}_Markdup.bam.bai"), emit: "bai"
-
-    script:
-    """
-    samtools index -b ${Markdup_bam_path} -o "${sampleid}_Markdup.bam.bai"
-    """
-}
 
 workflow BWAALIGNMENT{
     take:
     Fastp_trimmed
 
     main:
-    Reference_channel = channel.fromPath(params.Ref_genome_path)
+    Reference_channel = channel.fromPath(params.Ref_genome_path) //channel takes input from global parameter specified in the RunConfig.yaml file
     BWA_Indexing(Reference_channel)
+
     Aligner_input_ch = Fastp_trimmed
-    Aligner_indexes_ch = BWA_Indexing.out.Index_files.collect().map{ Index_files -> tuple(Index_files)}.view()
-    Aligner(Aligner_input_ch, Aligner_indexes_ch)
+    Aligner_indexes_ch = BWA_Indexing.out.Index_files.collect().map{ Index_files -> tuple(Index_files)} //collecting all the index files and then generating a map from them
+
+    Aligner(Aligner_input_ch, Aligner_indexes_ch) //Running aligner using 2 generated input channels
 
     Fixmate(Aligner.out.bam) //takes name sorted raw bam
     Markdup(Fixmate.out.Sorted_Fixmate_BAM) //takes coordinate sorted Fixmate -m bam
@@ -64,7 +27,7 @@ workflow BWAALIGNMENT{
 
     emit:
     Indexes = BWA_Indexing.out.Index_files
-    BAM_out = Markdup.out.Markdup_BAM.view().map{sampleid, markdup_bam_path -> markdup_bam_path}.view()
+    BAM_out = Markdup.out.Markdup_BAM.view().map{sampleid, markdup_bam_path -> markdup_bam_path}.view() //taking only the second argument of the tuple by overwriting with only second argument
     BAI_out = IndexForIGV.out.bai
 
     //test
