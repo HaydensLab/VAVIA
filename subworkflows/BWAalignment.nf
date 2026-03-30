@@ -39,11 +39,11 @@ process IndexForIGV{
     tuple val(sampleid), path(Markdup_bam_path)
 
     output:
-    path("${sampleid}.bai"), emit: "bai"
+    path("${sampleid}_Markdup.bam.bai"), emit: "bai"
 
     script:
     """
-    samtools index -b ${Markdup_bam_path} -o "${sampleid}.bai"
+    samtools index -b ${Markdup_bam_path} -o "${sampleid}_Markdup.bam.bai"
     """
 }
 
