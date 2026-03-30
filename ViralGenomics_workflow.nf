@@ -57,9 +57,14 @@ include { BWAALIGNMENT } from './subworkflows/BWAalignment.nf'
 workflow{
 
     main:
-    PREPROCESSING()
-    BWAALIGNMENT(PREPROCESSING.out.Fastp_trimmed)
-   
+    PREPROCESSING() //runs fastqc, multiqc and fastp #######add option for trimmotatic
+    
+    //ALIGNMENT AND POST-PROCESSING
+    BWAALIGNMENT(PREPROCESSING.out.Fastp_trimmed) //runs BWA-MEM and removes duplicate reads whilst generating a .bai for IGV viewing
+    
+    //CONSENSUS GENOME GENERATION
+
+    //PHYLOGENETIC ANALYSIS
     
 
     publish:
