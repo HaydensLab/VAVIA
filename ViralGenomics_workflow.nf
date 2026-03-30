@@ -50,21 +50,16 @@ include { Aligner } from "./modules/BWAaligner.nf"
 
 // }
 
-
 //each channel displays as a symlink to the previous work directory of the previous process, hence the loss of absolute file path
 include { PREPROCESSING } from './subworkflows/Preprocessing.nf'
+include { BWAALIGNMENT } from './subworkflows/BWAalignment.nf'
 
 workflow{
 
     main:
     PREPROCESSING()
-    
-    //NOT COMPLETE #############################################################################!!!!!!!!!!!!!!!!!!
-    Reference_channel = channel.fromPath(params.Ref_genome_path)
-    BWA_Indexing(Reference_channel)
-    Aligner_input_ch = PREPROCESSING.out.Fastp_trimmed
-    Aligner_indexes_ch = BWA_Indexing.out.Index_files.collect().map{ Index_files -> tuple(Index_files)}.view()
-    Aligner(Aligner_input_ch, Aligner_indexes_ch)
+    BWAALIGNMENT(PREPROCESSING.out.Fastp_trimmed)
+   
     
 
     publish:
@@ -76,8 +71,8 @@ workflow{
     Trimmed_QCresults       = PREPROCESSING.out.Trimmed_QCresults
     Trimmed_multiqc_results = PREPROCESSING.out.Trimmed_multiqc_results
     //Index and align
-    Indexes = BWA_Indexing.out.Index_files
-    BAM_out = Aligner.out.bam
+    Indexes                 = BWAALIGNMENT.out.Indexes
+    BAM_out                 = BWAALIGNMENT.out.BAM_out
 
 }
 
