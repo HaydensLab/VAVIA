@@ -10,19 +10,7 @@ params{
     platform: String
     insert_size: String
 }
-
-//==========================================================================Processing modules==========================================================================
-include { fastqc } from "./modules/fastqc.nf"
-include { fastqc as fastqc_trimmed} from "./modules/fastqc.nf" //Alias for reuse
-
-include { multiqc } from "./modules/multiqc.nf"
-include { multiqc as multiqc_trimmed} from "./modules/multiqc.nf" //Alias for reuse
-
-include { fastp } from "./modules/fastp.nf"
-
-include { BWA_Indexing} from "./modules/BWAindexer.nf"
-include { Aligner } from "./modules/BWAaligner.nf"  
-
+//==========================================================================Help section==========================================================================
 
 // process CleanUp{
 //     input:
@@ -58,14 +46,14 @@ workflow{
 
     main:
     PREPROCESSING() //runs fastqc, multiqc and fastp #######add option for trimmotatic
-    
+
     //ALIGNMENT AND POST-PROCESSING
     BWAALIGNMENT(PREPROCESSING.out.Fastp_trimmed) //runs BWA-MEM and removes duplicate reads whilst generating a .bai for IGV viewing
     
     //CONSENSUS GENOME GENERATION
 
     //PHYLOGENETIC ANALYSIS
-    
+    //construct for args to be added later: Variable ? Iftrue : Else
 
     publish:
     QCresults               = PREPROCESSING.out.QCresults

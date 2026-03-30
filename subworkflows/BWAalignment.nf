@@ -1,6 +1,6 @@
 #!/usr/bin/env nextflow
 nextflow.enable.dsl=2
-
+//==========================================================================Processing modules==========================================================================
 include { BWA_Indexing } from "../modules/BWAindexer.nf"
 include { Aligner } from "../modules/BWAaligner.nf"  
 include { Fixmate } from "../modules/Fixmate.nf"
