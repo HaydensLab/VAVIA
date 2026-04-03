@@ -44,6 +44,7 @@ params{
 //each channel displays as a symlink to the previous work directory of the previous process, hence the loss of absolute file path
 include { PREPROCESSING } from './subworkflows/Preprocessing.nf'
 include { BWAALIGNMENT } from './subworkflows/BWAalignment.nf'
+include { VARIANT_CALLING } from './subworkflows/VariantCalling.nf'
 
 workflow{
 
@@ -54,7 +55,7 @@ workflow{
     BWAALIGNMENT(PREPROCESSING.out.Fastp_trimmed) //runs BWA-MEM and removes duplicate reads whilst generating a .bai for IGV viewing
     
     //Variant calling
-
+    VARIANT_CALLING(BWAALIGNMENT.out.BAM_out)
 
     //CONSENSUS GENOME GENERATION
 
@@ -73,6 +74,8 @@ workflow{
     Indexes                 = BWAALIGNMENT.out.Indexes
     BAM_out                 = BWAALIGNMENT.out.BAM_out
     BAI_out                 = BWAALIGNMENT.out.BAI_out
+    //variant calling
+    VCF_out                 = VARIANT_CALLING.out.VCF_out
 
 }
 
