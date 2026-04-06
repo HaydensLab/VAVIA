@@ -59,6 +59,7 @@ workflow{
     BAI_out                 = BWAALIGNMENT.out.BAI_out
     //variant calling
     VCF_out                 = VARIANT_CALLING.out.VCF_out
+    nVCF_out                = VARIANT_CALLING.out.nVCF_out
 
 }
 
@@ -107,6 +108,9 @@ output{
     }
     //=================================Variant calling =================================
     VCF_out{
+        path "./${params.batch}/Variant_Calls"
+    }
+    nVCF_out{
         path "./${params.batch}/Variant_Calls"
     }
 }

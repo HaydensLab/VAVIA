@@ -2,15 +2,6 @@
 nextflow.enable.dsl=2
 
 
-// process CliqueSNV{
-
-// }
-
-// process ShoRAH{
-
-
-// }
-
 // process  BaseRecalibrator{
 
 
@@ -71,13 +62,32 @@ process LofreqVarCall{
     tuple val(sampleid), path(recalibrated_bam)
 
     output:
-    path("${sampleid}_variants.vcf"), emit: LoFreq_VCF_out, optional: true
+    tuple val (sampleid), path("${sampleid}_variants.vcf"), emit: LoFreq_VCF_out, optional: true
 
     script:
     """
     ##lofreq call-parallel --pp-threads 8 -f ref.fa -o vars.vcf aln.bam
     lofreq call --call-indels -f ${ref_genome} -o "${sampleid}_variants.vcf" ${recalibrated_bam}
     """
+}
+
+process Normalise_and_Filter{
+    tag("${sampleid}")
+    container 'staphb/bcftools:1.23'
+
+    input:
+    path(ref_genome)
+    tuple val(sampleid), path(vcf_file)
+
+    output:
+    tuple val (sampleid), path("${sampleid}_norm_variants.vcf"), emit: Normalised_VCF_out, optional: true
+    tuple val (sampleid), path("${sampleid}_filtered_norm_variants.vcf"), emit: Filtered_Normalised_VCF_out, optional: true
+    script:
+    """
+    bcftools norm -D -m -f "${ref_genome}" -o "${sampleid}_norm_variants.vcf" ${vcf_file}
+    bcftools view -i 'DP>=30 && AF>=0.01 && QUAL>20' "${sampleid}_norm_variants.vcf" > "${sampleid}_filtered_norm_variants.vcf"
+    """
+
 }
 
 
@@ -95,8 +105,12 @@ workflow VARIANT_CALLING{
     LoFreqIndelQual(Reference_channel_VCF, bams_ch)
     println("Using VariantCaller lofreq")
     LofreqVarCall(Reference_channel_VCF, LoFreqIndelQual.out.IndelQual_BAM)
+    println("Normalising output VCF")
+    Normalise_and_Filter(Reference_channel_VCF, LofreqVarCall.out.LoFreq_VCF_out)
 
 
     emit:
     VCF_out = LofreqVarCall.out.LoFreq_VCF_out
+    nVCF_out  = Normalise_and_Filter.out.Normalised_VCF_out
+    fnVCF_out = Normalise_and_Filter.out.Filtered_Normalised_VCF_out
 }
