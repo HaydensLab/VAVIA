@@ -17,7 +17,7 @@ process Aligner{
     script:
     """
     read_group="@RG\\tID:Seq${sampleid}\\tSM:Seq${sampleid}\\tPL:${params.platform}\\tPI:${params.insert_size}"
-    bwa mem -R \$read_group ${Indexes[0].baseName} ${read1} ${read2} | samtools view -b -S | samtools sort -n -o "${sampleid}.bam"
+    bwa mem -M -R \$read_group ${Indexes[0].baseName} ${read1} ${read2} | samtools view -b -S | samtools sort -n -o "${sampleid}.bam"
     """
 
     stub:

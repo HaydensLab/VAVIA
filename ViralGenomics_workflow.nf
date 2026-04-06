@@ -24,24 +24,6 @@ params{
 // }
 
 
-
-
-// process PostProcessing{
-
-// }
-
-// process VariantCalling{
-
-// }
-
-// process VariantFiltering{
-
-// }
-
-// process VariantAnnotation{
-
-// }
-
 //each channel displays as a symlink to the previous work directory of the previous process, hence the loss of absolute file path
 include { PREPROCESSING } from './subworkflows/Preprocessing.nf'
 include { BWAALIGNMENT } from './subworkflows/BWAalignment.nf'

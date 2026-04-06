@@ -21,23 +21,23 @@ nextflow.enable.dsl=2
 
 // }
 
-process GATKHaplotypecaller{
-    tag("${sampleid}")
+// process GATKHaplotypecaller{
+//     tag("${sampleid}")
 
-    container 'broadinstitute/gatk:4.6.2.0'
+//     container 'broadinstitute/gatk:4.6.2.0'
 
-    input:
-    path(ref_genome)
-    tuple val(sampleid), path(bam_path)
+//     input:
+//     path(ref_genome)
+//     tuple val(sampleid), path(bam_path)
 
-    output:
-    tuple val (sampleid), path("${sampleid}.gatkHTC.bam"), emit: GATK_haplotypecaller_BAM
+//     output:
+//     tuple val (sampleid), path("${sampleid}.gatkHTC.bam"), emit: GATK_haplotypecaller_BAM
 
-    script:
-    """
+//     script:
+//     """
     
-    """
-}
+//     """
+// }
 
 process LoFreqIndelQual{
 
@@ -93,36 +93,8 @@ workflow VARIANT_CALLING{
 
     
     LoFreqIndelQual(Reference_channel_VCF, bams_ch)
-
-
-    if(!params.Variant_Caller){ //if no input is supplied
-        println("No Variant_Caller specified - check RunConfig.yaml")
-        println("Falling back to Lofreq default")
-        LofreqVarCall(Reference_channel_VCF, LoFreqIndelQual.out.IndelQual_BAM)
-
-
-    }
-    else if(params.Variant_Caller == "lofreq"){
-        println("Using VariantCaller lofreq")
-        LofreqVarCall(Reference_channel_VCF, LoFreqIndelQual.out.IndelQual_BAM)
-
-
-    }
-    else if(params.Variant_Caller == "gatk"){
-        println("Using VariantCaller GATK_haplotypecaller")
-
-
-    }
-    else if(params.Variant_Caller == "cliquesnv"){
-        println("Using VariantCaller CliqueSNV")
-
-
-    }
-    else if(params.Variant_Caller == "shorah"){
-        println("Using VariantCaller shoRAH")
-
-
-    }
+    println("Using VariantCaller lofreq")
+    LofreqVarCall(Reference_channel_VCF, LoFreqIndelQual.out.IndelQual_BAM)
 
 
     emit:
