@@ -58,7 +58,6 @@ workflow{
     //HaplotypeReconstruction for generation of varied neoantigen calls
 
     //CONSENSUS GENOME GENERATION
-
     //PHYLOGENETIC ANALYSIS
     //construct for args to be added later: Variable ? Iftrue : Else
 
