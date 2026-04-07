@@ -46,7 +46,7 @@ workflow{
     println("Current filtering parameters: DP>=30 && AF>=0.01 && QUAL>20 ")
     println("!!!!!!!!!!!!!!!! To edit these please modify the Normalise_and_Filter module ----- a config parameter will be added at a later date")
 
-
+    //PRE-PROCESSING
     PREPROCESSING() //runs fastqc, multiqc and fastp #######add option for trimmotatic
 
     //ALIGNMENT AND POST-PROCESSING

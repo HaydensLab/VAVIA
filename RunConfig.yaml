@@ -1,7 +1,6 @@
-#Mecessary
+#Necessary
 read_location: "Raw_data"                             #the name of the store directory DO NOT INCLUDE / just raw name in case of absolute or small relative do not include final /
 Ref_genome_path: References/NC_001526.4.fasta         #provide complete path (relative or absolute) to the Reference genome
-Ref_Accession: "NC_001526.4"                          #remove version such as .4 in the case of NC_001526.4 > use NC_001526
 insert_size: "150"
 platform: "ILLUMINA"                                  #put in all caps
 
@@ -15,3 +14,11 @@ Variant_Caller: "lofreq"                              #Options: <lofreq>, <gatk>
 #Base_Recalibration: "lofreq"                          #Options: <bqsr> or <lofreq> # lofreqindelqual is the default and represents <lofreq> - BQSR currently non-functional
 #Variants_database:                                    #Not currently used
 #Filtering_Cutoffs: 'DP>=30 && AF>=0.01 && QUAL>20'    #Default >>>>>> "DP>=30 && AF>=0.01 && QUAL>20" -------currently adjusted in the subworkflow "VariantCalling.nf"
+
+
+
+
+
+
+#######Debug setting ------ only for use in stub-run BARELY IMPLEMENTED DO NOT WORRY ABOUT THIS
+Ref_Accession: "NC_001526.4"                          #Used for indexer -stub as a debug for indexing
