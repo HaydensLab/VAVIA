@@ -29,13 +29,14 @@ params{
 include { PREPROCESSING } from './subworkflows/Preprocessing.nf'
 include { BWAALIGNMENT } from './subworkflows/BWAalignment.nf'
 include { VARIANT_CALLING } from './subworkflows/VariantCalling.nf'
+include { HAPLOTYPE_RECONSTRUCTION } from './subworkflows/HaplotypeReconstruction.nf'
 
 workflow{
 
     main:
     println("============================================PARAMETERS============================================")
     println("batch: ${params.batch}")
-    println("Reference accession: ${params.Ref_accession}")
+    //println("Reference accession: ${params.Ref_accession}")
     println("Variant caller: LoFreq")
     println("Platform: ${params.platform}")
     println("Drawing from read location: ${params.read_location}")
@@ -56,7 +57,7 @@ workflow{
     VARIANT_CALLING(BWAALIGNMENT.out.BAM_out)
 
     //HaplotypeReconstruction for generation of varied neoantigen calls
-        //cliqueSNV
+    HAPLOTYPE_RECONSTRUCTION(BWAALIGNMENT.out.BAM_out, PREPROCESSING.out.Fastp_trimmed)    //cliqueSNV
 
     //CONSENSUS GENOME GENERATION
     //PHYLOGENETIC ANALYSIS
@@ -78,6 +79,8 @@ workflow{
     VCF_out                 = VARIANT_CALLING.out.VCF_out
     nVCF_out                = VARIANT_CALLING.out.nVCF_out
     fnVCF_out               = VARIANT_CALLING.out.fnVCF_out
+    //haplotype reconstruction
+    Haplotype_out           = HAPLOTYPE_RECONSTRUCTION.out.Haplotype_out //output the pan haplotype output - currently testing
 
 }
 
@@ -133,5 +136,9 @@ output{
     }
     fnVCF_out{
         path "./${params.batch}/Variant_Calls"
+    }
+    //=================================Haplotypes =================================
+    Haplotype_out{
+        path "./${params.batch}/CliqueSNV"
     }
 }

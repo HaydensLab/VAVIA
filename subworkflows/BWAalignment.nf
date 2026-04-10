@@ -31,7 +31,8 @@ workflow BWAALIGNMENT{
     BAI_out = IndexForIGV.out.bai
 
     //test
-    //BAM_out = Aligner.out.bam.map{sampleid, rando_bam_path -> rando_bam_path}
-    //BAI_out = channel.empty()
+    // BAM_out = Aligner.out.bam.map{sampleid, rando_bam_path -> rando_bam_path}
+    // BAI_out = channel.empty()
+    
     
 }
