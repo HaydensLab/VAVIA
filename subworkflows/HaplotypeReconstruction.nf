@@ -1,29 +1,30 @@
 //Take input BAM and run through the following 2 programs: CliqueSNV (generating local haplotypes) and HaploClique
 
 process SAVAGE{
-    container
+    container "fabiomarcelo/savage:latest"
     tag("${sampleid}")
 
     input:
     tuple val(sampleid), path(read1), path(read2)
 
     output:
-
+    tuple val(sampleid), path("${sampleid}_SAVAGEoutput/*"), emit: "SAVAGE_out", optional: true
     script:
     """
-    haploconduct savage 
+    savage --split  --revcomp \
+    -p1 "${read1}" -p2 ${read2} -o "${sampleid}_SAVAGEoutput/"
     """
 }
 
 process HaploClique{
-    container
+    container "community.wave.seqera.io/library/haploclique:1.3.1--5baeef280bc3b4ba"
     tag("${sampleid}")
 
     input:
     tuple val(sampleid), path(bam_path)
 
     output:
-
+    tuple val(sampleid), path("*"), emit: "haploclique_out", optional: true
 
     script:
     """
@@ -60,12 +61,15 @@ workflow HAPLOTYPE_RECONSTRUCTION{
     raw_reads
     main:
     //Haplotype SNV calls
-    cliqueSNV(params.platform.toLowerCase(), Markdup_BAM)
-    cliqueSNV.out.CliqueSNV_out.view()
+         cliqueSNV(params.platform.toLowerCase(), Markdup_BAM)
+            cliqueSNV.out.CliqueSNV_out.view()
     //Global haplotypes
-    HaploClique(Markdup_BAM)
+            //HaploClique(Markdup_BAM)
+        SAVAGE(raw_reads)
 
     emit:
     Haplotype_out = cliqueSNV.out.CliqueSNV_out
+            //Global_Haplotype_out = HaploClique.out.haploclique_out
+    Global_Haplotype_out = SAVAGE.out.SAVAGE_out
 
 }

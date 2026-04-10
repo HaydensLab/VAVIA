@@ -53,11 +53,11 @@ workflow{
     //ALIGNMENT AND POST-PROCESSING
     BWAALIGNMENT(PREPROCESSING.out.Fastp_trimmed) //runs BWA-MEM and removes duplicate reads whilst generating a .bai for IGV viewing
     
-    //Variant calling !!!!!!!!!!!!!!!! this currently DOES NOT WORK ------------ only works on first file put in
+    //Variant calling
     VARIANT_CALLING(BWAALIGNMENT.out.BAM_out)
 
     //HaplotypeReconstruction for generation of varied neoantigen calls
-    HAPLOTYPE_RECONSTRUCTION(BWAALIGNMENT.out.BAM_out, PREPROCESSING.out.Fastp_trimmed)    //cliqueSNV
+    HAPLOTYPE_RECONSTRUCTION(BWAALIGNMENT.out.BAM_out, PREPROCESSING.out.Fastp_trimmed)    //cliqueSNV, haploclique and SAVAGE
 
     //CONSENSUS GENOME GENERATION
     //PHYLOGENETIC ANALYSIS
@@ -81,6 +81,7 @@ workflow{
     fnVCF_out               = VARIANT_CALLING.out.fnVCF_out
     //haplotype reconstruction
     Haplotype_out           = HAPLOTYPE_RECONSTRUCTION.out.Haplotype_out //output the pan haplotype output - currently testing
+    Global_Haplotype_out    = HAPLOTYPE_RECONSTRUCTION.out.Global_Haplotype_out
 
 }
 
@@ -139,6 +140,9 @@ output{
     }
     //=================================Haplotypes =================================
     Haplotype_out{
-        path "./${params.batch}/CliqueSNV"
+        path "./${params.batch}/Haplotypes"
+    }
+    Global_Haplotype_out{
+        path "./${params.batch}/Haplotypes"
     }
 }
