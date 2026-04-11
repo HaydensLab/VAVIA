@@ -7,6 +7,22 @@ include { Fixmate } from "../modules/Fixmate.nf"
 include { Markdup } from "../modules/Markdup.nf"
 include { IndexForIGV } from "../modules/IndexForIGV.nf"
 
+process Stats_and_Coverage{
+    tag("${sampleid}")
+    container "community.wave.seqera.io/library/samtools:1.23.1--d76a06ff3aefee52"
+
+    input:
+    tuple val(sampleid), path(bam_path)
+
+    output:
+    tuple val(sampleid), path(bam_path), env(AVERAGE_COVERAGE), emit: "bam_and_coverage", optional: true
+
+    script:
+    """
+    AVERAGE_COVERAGE=$(samtools depth -a ${bam_path} | awk '{}')
+    """
+}
+
 
 workflow BWAALIGNMENT{
     take:
@@ -24,6 +40,10 @@ workflow BWAALIGNMENT{
     Fixmate(Aligner.out.bam) //takes name sorted raw bam
     Markdup(Fixmate.out.Sorted_Fixmate_BAM) //takes coordinate sorted Fixmate -m bam
     IndexForIGV(Markdup.out.Markdup_BAM) //outputs bai
+    
+    //Running coverage and other stats calculations
+
+
 
     emit:
     Indexes = BWA_Indexing.out.Index_files

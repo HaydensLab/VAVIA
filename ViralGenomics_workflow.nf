@@ -42,9 +42,9 @@ workflow{
     println("Drawing from read location: ${params.read_location}")
     println("Provided insert size: ${params.insert_size}")
     println("=============================================Overview=============================================")
-    println("This workflow will draw reads, align to a provided reference genome \n it will then call variants \n in this future this workflow will generate antigen prediction")
+    println("This workflow will draw reads, align to a provided reference genome\nit will then call variants\nin this future this workflow will generate antigen prediction")
     println("Current processes: raw fastqc, raw multiqc, fastp (later trimmomatic option), repeat QC for trimmed, BWA-MEM aligment, Fixmate + Markdup, Indexing for IGV viewing, LoFreq indelqual+Calling, VCF normalisation and filtering")
-    println("Current filtering parameters: DP>=30 && AF>=0.01 && QUAL>20 ")
+    println("Current filtering parameters: DP>=30 && AF>=0.01 && QUAL>20 - defaults")
     println("!!!!!!!!!!!!!!!! To edit these please modify the Normalise_and_Filter module ----- a config parameter will be added at a later date")
 
     //PRE-PROCESSING

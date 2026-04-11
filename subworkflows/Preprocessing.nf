@@ -26,6 +26,7 @@ workflow PREPROCESSING{
     fastqc_trimmed(fastp.out.read_tuple)
     multiqc_trimmed(params.batch, fastqc_trimmed.out.qc_path.collect())
 
+
     emit:
     QCresults               = fastqc.out.qc_path
     Multiqc_results         = multiqc.out

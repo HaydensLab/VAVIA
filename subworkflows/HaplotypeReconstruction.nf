@@ -1,5 +1,22 @@
 //Take input BAM and run through the following 2 programs: CliqueSNV (generating local haplotypes) and HaploClique
 
+process MEGAHIT{
+    container "vout/megahit:release-v1.2.9"
+    tag("${sampleid}")
+
+    input:
+    tuple val(sampleid), path(read1), path(read2)
+
+    output:
+    tuple val(sampleid), path("${sampleid}_SAVAGEoutput/*"), emit: "SAVAGE_out", optional: true
+    script:
+    """
+    savage --split  --revcomp \
+    -p1 "${read1}" -p2 ${read2} -o "${sampleid}_SAVAGEoutput/"
+    """
+}
+
+
 process SAVAGE{
     container "fabiomarcelo/savage:latest"
     tag("${sampleid}")
