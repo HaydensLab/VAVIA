@@ -12,5 +12,5 @@ Currently being developed on the basis of HPV analysis in Norwegian cervical can
 
 Current input:
 Some form of sample_id metadata in the reads:
-reads = (a file following the pattern: <SAMPLEID>_{1/2}.fastq
+reads = (a file following the pattern: {SAMPLEID}_{1/2}.fastq
 RunConfig.yaml (exact name) can be made manually or taken from github repo and modified. MUST CONTAIN THE REQUIRED INPUTS
