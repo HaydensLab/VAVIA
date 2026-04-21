@@ -6,8 +6,8 @@ platform: "ILLUMINA"                                  #put in all caps
 
 #Optional
 batch: "Test"                                         
-Variant_Caller: "lofreq"                              #Options: <lofreq>, <gatk>, <cliquesnv> amd <shorah>  ##CAP SENSITIVE --- optios are contained within < > ## Default: LOFREQ
-
+Variant_Caller: "lofreq"                         #Options: <lofreq>, <gatk>, <cliquesnv> amd <shorah>  ##CAP SENSITIVE --- optios are contained within < > ## Default: LOFREQ
+min_overlap_length: "100"                          #SAVAGE default is set to 60% of read length
 
 
 #Not implemented

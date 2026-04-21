@@ -1,14 +1,25 @@
-FROM mambaorg/micromamba:git-5f62561-cuda11.8.0-ubuntu22.04
+FROM ubuntu:22.04
 
-LABEL version="1.0"
+LABEL version="1.0.1"
 
-COPY --chown=$MAMBA_USER:$MAMBA_USER environment.yml /tmp/environment.yml
+SHELL [ "/bin/bash", "-c" ]
 
-RUN micromamba install -y -n base -f /tmp/environment.yml && micromamba clean --all --yes
+RUN apt-get update && apt-get install -y --no-install-recommends \
+wget bzip2 ca-certificates curl git procps \
+&& rm -rf /var/lib/apt/lists/*
 
-ARG MAMBA_DOCKERFILE_ACTIVATE=1
-WORKDIR /work
+ENV MAMBA_ROOT_PREFIX=/opt/conda 
 
-RUN chown -R $MAMBA_USER:$MAMBA_USER /work
+ENV PATH=/opt/conda/bin:$PATH
 
-CMD ["bash"]
+RUN curl -Ls https://micro.mamba.pm/api/micromamba/linux-64/latest | tar -xvj bin/micromamba \
+&& mv bin/micromamba /usr/local/bin/micromamba \
+&& chmod +x /usr/local/bin/micromamba
+
+COPY environment.yml /tmp/environment.yml
+
+RUN micromamba create -y -n base -f /tmp/environment.yml && micromamba clean --all --yes
+
+ENV PATH=/opt/conda/envs/base/bin:$PATH
+
+CMD ["/bin/bash"]

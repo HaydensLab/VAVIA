@@ -10,6 +10,7 @@ params{
     platform: String
     insert_size: String
     Variant_Caller: String = "lofreq"
+    min_overlap_length: String
     //Filtering_Cutoffs: String = "DP>=30 && AF>=0.01 && QUAL>20" //not yet implemented
 }
 //==========================================================================Help section==========================================================================

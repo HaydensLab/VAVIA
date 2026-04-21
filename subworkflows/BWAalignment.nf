@@ -23,8 +23,8 @@ process Stats_and_Coverage{
     //then divides by 750 to calculate the total number of splits the data requires for savage
     //then generates a stats output for the bam file
     """
-    AVERAGE_COVERAGE=\$(samtools depth -a ${bam_path} | awk '{sum+=\$3} END {print (sum/NR)}')
-    patch_num=\$(awk -v x="\$AVERAGE_COVERAGE" 'BEGIN {print int(x/750)}')
+    AVERAGE_COVERAGE=\$(samtools idxstats ${bam_path} | awk '{sum+=\$3} END {print (sum/NR)}') ###################CURRENTLY BROKEN
+    patch_num=\$(awk -v x="\$AVERAGE_COVERAGE" 'BEGIN {print int((x+749)/750)}')
     samtools stats ${bam_path} > "${sampleid}.stats"
     echo "${sampleid} has an average coverage of \$AVERAGE_COVERAGE \n\n Savage splitting: \$patch_num"
     """
@@ -50,7 +50,7 @@ workflow BWAALIGNMENT{
     
     //Running coverage and other stats calculations - taking the markdup as input
     Stats_and_Coverage(Markdup.out.Markdup_BAM)
-
+    Stats_and_Coverage.out.BAM_splitting.view()
 
     emit:
     Indexes = BWA_Indexing.out.Index_files
