@@ -12,8 +12,19 @@ params{
     Variant_Caller: String = "lofreq"
     min_overlap_length: String
     //Filtering_Cutoffs: String = "DP>=30 && AF>=0.01 && QUAL>20" //not yet implemented
+
+
+
+    //subworkflow selection - used for deciding how you want the pipeline to run
+    Run_QC: Boolean = true
+    Run_HaplotypeReconstruction: Boolean = true
+    Input_format: String = "fastq"
+    Index_for_IGV: Boolean = true
 }
 //==========================================================================Help section==========================================================================
+
+
+
 
 // process CleanUp{
 //     input:
@@ -38,14 +49,13 @@ workflow{
     println("============================================PARAMETERS============================================")
     println("batch: ${params.batch}")
     //println("Reference accession: ${params.Ref_accession}")
-    println("Variant caller: LoFreq")
-    println("Platform: ${params.platform}")
-    println("Drawing from read location: ${params.read_location}")
-    println("Provided insert size: ${params.insert_size}")
-    println("=============================================Overview=============================================")
-    println("This workflow will draw reads, align to a provided reference genome\nit will then call variants\nin the future this workflow will generate antigen prediction")
-    println("Current processes: raw fastqc, raw multiqc, fastp (later trimmomatic option), repeat QC for trimmed, BWA-MEM aligment, Fixmate + Markdup, Indexing for IGV viewing, LoFreq indelqual+Calling, VCF normalisation, filtering\nhaplotype reconstruction for antigen prediction")
-    println("Current filtering parameters: DP>=30 && AF>=0.01 && QUAL>20 - defaults")
+    println("Mode options selected: \n\t\t\tQC: ${params.Run_QC} \n\t\t\tHaplotypeReconstruction: ${params.Run_HaplotypeReconstruction} \n\t\t\tInput: ${params.Input_format} \n\t\t\tIndexing: ${params.Index_for_IGV} ")
+    println("\t\t\tVariant caller: LoFreq")
+    println("\t\t\tPlatform: ${params.platform}")
+    println("\t\t\tDrawing from: ${params.read_location}")
+    println("\t\t\tProvided insert size: ${params.insert_size}")
+    println("\t\t\tCurrent filtering parameters: DP>=30 && AF>=0.01 && QUAL>20 - defaults")
+    println("==================================================================================================")
     println("To edit any parameters that are program specific and not in RunConfig.yaml please modify in the /modules directory to fit your needs")
 
     //PRE-PROCESSING
@@ -63,6 +73,31 @@ workflow{
     //CONSENSUS GENOME GENERATION
     //PHYLOGENETIC ANALYSIS
     //construct for args to be added later: Variable ? Iftrue : Else
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     publish:
     QCresults               = PREPROCESSING.out.QCresults

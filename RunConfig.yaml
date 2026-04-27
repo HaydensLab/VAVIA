@@ -4,9 +4,15 @@ Ref_genome_path: References/NC_001526.4.fasta         #provide complete path (re
 insert_size: "150"
 platform: "ILLUMINA"                                  #put in all caps
 
+#Mode selection --- if not specified will turn on all extras and default to fastq mode
+Run_QC: true
+Run_HaplotypeReconstruction: true
+Input_format: "fastq"                                   #Either <"b"/"bam"> (provide a bam file) or paired-end <"f"/"fastq"> (<> indicates argument)
+Index_for_IGV: true
+
 #Optional
 batch: "Test"                                         
-Variant_Caller: "lofreq"                         #Options: <lofreq>, <gatk>, <cliquesnv> amd <shorah>  ##CAP SENSITIVE --- optios are contained within < > ## Default: LOFREQ
+Variant_Caller: "lofreq"                           #Options: <lofreq>, <gatk>, <cliquesnv> amd <shorah>  ##CAP SENSITIVE --- optios are contained within < > ## Default: LOFREQ
 min_overlap_length: "100"                          #SAVAGE default is set to 60% of read length - Ensure you have adequate memory availability for both your depth and genome size
 
 

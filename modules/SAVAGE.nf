@@ -32,13 +32,13 @@ process SAVAGE{
     bash_split=$split_num
 
     if [ \$bash_split -lt 1 ]; then
-        savage --split 1 --revcomp -t 4 \$min_overlap \
+        savage --split 1 --revcomp -t 8 \$min_overlap \
         -p1 ${sampleid}_1.fastq -p2 "${sampleid}_2.fastq" -o "${sampleid}_SAVAGEoutput/"
     elif ! [[ \$bash_split =~ ^[0-9]+\$ ]]; then
         echo "ERROR: calculated split_num for SAVAGE -splits was not a valid integer"
         exit 1
     else
-        savage --split \$bash_split --revcomp -t 4 \$min_overlap \
+        savage --split \$bash_split --revcomp -t 8 \$min_overlap \
         -p1 ${sampleid}_1.fastq -p2 "${sampleid}_2.fastq" -o "${sampleid}_SAVAGEoutput/"
     fi
     """
